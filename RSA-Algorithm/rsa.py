@@ -84,17 +84,17 @@ def decrypt_msg(key, ciphertext):
     k, n = key
     return ''.join(chr((char ** k) % n) for char in ciphertext)
 
-def run_sender(receiver_public_key):
+def run_sender(receiver_s_public_key):
     print("\n[Sender]")
     message = input("Enter your message to send: ")
-    encrypted_message = encrypt_msg(receiver_public_key, message)
+    encrypted_message = encrypt_msg(receiver_s_public_key, message)
     print("Sending encrypted message:", encrypted_message)
     return encrypted_message
 
-def run_receiver(receiver_private_key, encrypted_message):
+def run_receiver(receiver_s_private_key, encrypted_message):
     print("\n[Receiver]")
     print("Received encrypted message:", encrypted_message)
-    decrypted_message = decrypt_msg(receiver_private_key, encrypted_message)
+    decrypted_message = decrypt_msg(receiver_s_private_key, encrypted_message)
     print("Decrypted message:", decrypted_message)
     
 if __name__ == "__main__":
@@ -102,9 +102,12 @@ if __name__ == "__main__":
 
     # Generating keys
     key_size = int(input("Enter key size in bits (e.g., 16, 32, 64): "))
-    public_key, private_key = generate_key(key_size)
-    print(f"Public Key: {public_key}")
-    print(f"Private Key: {private_key}")
+    
+    s_public_key, s_private_key = generate_key(key_size)
+    r_public_key, r_private_key = generate_key(key_size)
+    
+    print(f"Public Key: {s_public_key}")
+    print(f"Private Key: {s_private_key}")
 
     while True:
         print("\nChoose an option:")
@@ -118,33 +121,33 @@ if __name__ == "__main__":
         if choice == '1':
             # Encrypt a Message and Decrypt
             message = input("[Sender] Enter a message to encrypt: ")
-            encrypted_message = encrypt_msg(public_key, message)
+            encrypted_message = encrypt_msg(s_public_key, message)
             print("[Sender] Encrypted Message: ", encrypted_message)
             print("\n[Receiver] Decrypting the message...")
-            decrypted_message = decrypt_msg(private_key, encrypted_message)
+            decrypted_message = decrypt_msg(s_private_key, encrypted_message)
             print("[Receiver] Decrypted Message: ", decrypted_message)
 
         elif choice == '2':
             # Sign a Message and Verify
             message = input("[Sender] Enter a message to sign: ")
-            signature = encrypt_msg(private_key, message)
+            signature = encrypt_msg(s_private_key, message)
             print("[Sender] Digital Signature: ", signature)
             print("\n[Receiver] Verifying the message...")
-            verified_message = decrypt_msg(public_key, signature)
+            verified_message = decrypt_msg(s_public_key, signature)
             print("[Receiver] Verified Message: ", verified_message)
 
         elif choice == '3':
             # Sign a Message, Encrypt and Decrypt
             message = input("[Sender] Enter a message to sign and encrypt: ")
-            signed_message = encrypt_msg(private_key, message)
+            signed_message = encrypt_msg(s_private_key, message)
             signed_message_str = ','.join(map(str, signed_message)) # map will convert all integers into strings
-            encrypted_signed_message = encrypt_msg(public_key, signed_message_str)
+            encrypted_signed_message = encrypt_msg(r_public_key, signed_message_str)
             print("[Sender] Encrypted Signed Message: ", encrypted_signed_message)
 
             print("\n[Receiver] Decrypting and verifying the message...")
-            decrypted_signed_message_str = decrypt_msg(private_key, encrypted_signed_message)
+            decrypted_signed_message_str = decrypt_msg(r_private_key, encrypted_signed_message)
             decrypted_signed_message = list(map(int, decrypted_signed_message_str.split(',')))
-            original_message = decrypt_msg(public_key, decrypted_signed_message)
+            original_message = decrypt_msg(s_public_key, decrypted_signed_message)
             print("[Receiver] Original Message: ", original_message)
 
         elif choice == '4':
