@@ -50,8 +50,8 @@ def generate_key(size):
     :param size: Bit size of the keys.
     :return: Tuple of public and private keys.
     """
-    p = generate_large_prime(size)
-    q = generate_large_prime(size)
+    p = generate_large_prime(size//2)
+    q = generate_large_prime(size//2)
     n = p * q
     phi = (p - 1) * (q - 1)
     
