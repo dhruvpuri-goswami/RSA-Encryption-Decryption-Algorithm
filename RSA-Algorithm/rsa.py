@@ -71,8 +71,8 @@ def encrypt_msg(key, plaintext):
     :param plaintext: Message to be encrypted.
     :return: Encrypted message as a list of integers.
     """
-    k, n = key
-    return [(ord(char) ** k) % n for char in plaintext]
+    e, n = key
+    return [pow(ord(char), e, n) for char in plaintext]
 
 def decrypt_msg(key, ciphertext):
     """
@@ -81,8 +81,8 @@ def decrypt_msg(key, ciphertext):
     :param ciphertext: Encrypted message as a list of integers.
     :return: Decrypted plaintext message.
     """
-    k, n = key
-    return ''.join(chr((char ** k) % n) for char in ciphertext)
+    d, n = key
+    return ''.join(chr(pow(char, d, n)) for char in ciphertext)
 
 def run_sender(receiver_s_public_key):
     print("\n[Sender]")
